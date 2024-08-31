@@ -2,10 +2,24 @@ import discord
 from discord.ext import commands
 from os import listdir
 from random import choice
+import requests 
+
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents)
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+def get_dog_image_url():    
+    url = 'https://random.dog/woof.json'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
 
 @bot.event
 async def on_ready():
@@ -44,5 +58,15 @@ async def animal(ctx):
     await ctx.send(file=picture)
     if random_image in odd_images:
         await ctx.send("Редкая")
+
+@bot.command('duck')
+async def duck(ctx):
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+@bot.command('dog')
+async def dog(ctx):
+    image_url = get_dog_image_url()
+    await ctx.send(image_url)
 
 bot.run('token')
